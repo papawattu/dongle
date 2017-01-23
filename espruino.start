@@ -1,0 +1,2 @@
+#!/bin/sh
+nohup /Espruino/espruino /Espruino/main.min.js > /dev/null &
