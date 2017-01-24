@@ -16,7 +16,7 @@ export default {
     json(),
     cleanup(),
     replace({
-      SERIAL_DEV: JSON.stringify( '/dev/pts/2' )
+      SERIAL_DEV: JSON.stringify( '/dev/ttyS0' )
     }),
     nodeResolve({
       main: true,
