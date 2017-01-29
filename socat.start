@@ -1,8 +1,0 @@
-#!/bin/sh
-PORT=2222
-INOPTS="reuseaddr"
-OUTOPTS=
-PIDFILE=/var/run/socat-$PORT.pid
-OPTS="-d -d -lm"
-SOCAT=/usr/bin/socat
-$SOCAT $OPTS pty,raw,echo=0 tcp-l:$PORT,$INOPTS < /dev/null &

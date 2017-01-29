@@ -276,7 +276,7 @@ var gprsFuncs = {
           break;
       }
     };
-    at.cmd("ATE0\r\n",3000,cb);
+    at.cmd("ATE0\r\n",9999,cb);
   },
   "reset": function(callback) {
     if (!rst) return gprsFuncs.init(callback);
@@ -297,7 +297,7 @@ var gprsFuncs = {
         case 0:
           if(r === 'OK') {
             s = 1;
-            at.cmd('AT+CIICR\r\n', 2000, cb);
+            at.cmd('AT+CIICR\r\n', 10000, cb);
           } else if(r) {
             callback('Error in ' + s + ': ' + r);
           }

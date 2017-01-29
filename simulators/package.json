@@ -1,0 +1,47 @@
+{
+  "name": "dongle-sims",
+  "version": "1.0.0",
+  "description": "PHEV Dongle simulator code",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "node lib/index.js",
+    "build": "./node_modules/.bin/babel src --out-dir lib --source-maps inline --copy-files",
+    "test": "npm run test-unit",
+    "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-core/register --recursive ./src",
+    "docker-build": "docker build -t simulators .",
+    "docker-run": "docker run --rm --name simulators simulators"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/papawattu/dongle.git"
+  },
+  "author": "Jamie Nuttall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/papawattu/dongle/issues"
+  },
+  "homepage": "https://github.com/papawattu/dongle#readme",
+  "dependencies": {
+    "retry": "^0.10.1",
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
+    "babel-plugin-resolver": "^1.1.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-eslatest-node6": "^1.0.1",
+    "babel-preset-latest": "^6.22.0",
+    "babel-register": "^6.18.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0"
+  }
+}
