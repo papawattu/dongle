@@ -20,9 +20,10 @@ export default class PhevWifi {
         this.host = host;
     }
     setPort(port) {
-        this.port = host;
+        this.port = port;
     }
     start(cb) {
+        console.log('Starting WIFI');
         if(process.env.BOARD != 'LINUX') {
             this.wifi.connect(this.ssid, {password: this.password}, (ap) => { 
                 this.wifiConnected = true;

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "cd espruino && npm run build",
     "docker-build": "npm run build && docker build -t dongle .",
-    "docker-run": "npm run docker-build && docker run --device /dev/ttyS0 -p 2222:2222 --rm --name dongle dongle"
+    "docker-run": "npm run docker-build && docker run -t --device /dev/ttyS0 -p 2222:2222 --rm --name dongle dongle"
   },
   "repository": {
     "type": "git",
