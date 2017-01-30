@@ -8,33 +8,32 @@ const minify = require('rollup-plugin-minify');
 const replace = require('rollup-plugin-replace');
 
 export default {
-  entry: 'espruino/src/main.js',
-  dest: 'espruino/lib/main.min.js',
+  entry: 'src/main.js',
+  dest: 'lib/main.min.js',
   format: 'cjs',
-//  sourceMap: 'inline',
   plugins: [
     json(),
     cleanup(),
-    replace({
-      SERIAL_DEV: JSON.stringify( '/dev/ttyS0' )
-    }),
     nodeResolve({
       main: true,
-      skip: [ 'NetworkJS', 'wifi' ]
+      skip: ['NetworkJS', 'Wifi']
     }),
-      commonjs({
+    commonjs({
       namedExports: {
-        'espruino/src/SIM900/SIM900.js': [ 'SIM900' ],
-        'espruino/src/SIM900/AT.js': [ 'AT' ],
+        'src/SIM900/SIM900.js': ['SIM900'],
+        'src/SIM900/AT.js': ['AT'],
       }
     }),
     babel({
-      exclude: 'node_modules/**',
       presets: [
         [
-          "es2015-rollup"
+          "es2015", {
+            "modules": false
+          }
         ]
       ],
+      babelrc: false,
+      exclude: 'node_modules/**',
       plugins: [
         "external-helpers"
       ]

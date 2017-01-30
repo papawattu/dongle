@@ -1,11 +1,14 @@
 import net from 'net';
 
 export default class PhevWifi {
-    constructor(wifi) {
+    constructor({wifi}) {
         this.ssid = null;
         this.password = null;
         this.wifi = wifi;
         this.socket = null;
+        this.host = null;
+        this.port = null;
+        this.wifiConnected = false;
     }
     setSSID(ssid) {
         this.ssid = ssid;
@@ -13,13 +16,29 @@ export default class PhevWifi {
     setPassword(password) {
         this.password = password;
     }
-    start() {
-        this.socket = net.connect({host: HOST, port: PORT},()=> {
-
+    setHost(host) {
+        this.host = host;
+    }
+    setPort(port) {
+        this.port = host;
+    }
+    start(cb) {
+        if(process.env.BOARD != 'LINUX') {
+            this.wifi.connect(this.ssid, {password: this.password}, (ap) => { 
+                this.wifiConnected = true;
+                cb();
+            });
+        } else {
+            this.wifiConnected = true;
+            cb();
+        }
+    }
+    connect(cb) {
+        this.socket = net.connect({host: this.host, port: this.port},()=> {
+            cb();
         });
         this.socket.on('data', (data) => {
             
         });
     }
-
 }

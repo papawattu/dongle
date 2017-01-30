@@ -2,15 +2,20 @@ import net from 'net';
 import * as log from 'winston';
 import retry from 'retry';
 
-const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 2222;
+const DONGLEHOST = process.env.DONGLE_2222_TCP_ADDR || 'localhost';
+const DONGLEPORT = process.env.DONGLE_2222_TCP_PORT || 2222;
 
+const PHEVHOST = process.env.PHEV_1974_TCP_ADDR || 'localhost';
+const PHEVPORT = process.env.PHEV_1974_TCP_PORT || 1974;
 
 export default class Sim900Stub {
-    constructor({ host = HOST, port = PORT }) {
-        this.socket = null;
-        this.host = host;
-        this.port = port;
+    constructor({ dongleHost = DONGLEHOST, donglePort = DONGLEPORT, phevHost = PHEVHOST, phevPort = PHEVPORT,}) {
+        this.dongleSocket = null;
+        this.dongleHost = dongleHost;
+        this.donglePort = donglePort;
+        this.phevHost = phevHost;
+        this.phevPort = phevPort;
+        
         this.buffer = '';
         this.connected = false;
         this.isData = false;
@@ -25,23 +30,32 @@ export default class Sim900Stub {
         let attempt = 1;
 
         op.attempt(() => {
-            log.info('Trying to connect to ' + this.host + ':' + this.port + ' attempt #' + attempt);
+            this.connected = false;
+            log.info('Trying to connect to adapter (SIM900) ' + this.dongleHost + ':' + this.donglePort + ' attempt #' + attempt);
 
-            this.socket = net.connect({ port: this.port, host: this.host }, () => {
+            this.dongleSocket = net.connect({ port: this.donglePort, host: this.dongleHost }, () => {
                 log.info('Connected');
+                this.connected = true;
             });
-            this.socket.on('error', (err) => {
+            this.dongleSocket.on('error', (err) => {
                 attempt++;
                 if (op.retry(err)) {
                     return;
                 }
             });
-            this.socket.on('data', this.handler.bind(this));
+            this.dongleSocket.on('data', this.handler.bind(this));
+            
+            this.dongleSocket.on('close',() => {
+                if(this.connected) {
+                    log.info('Dongle socket closed retrying');
+                    this.connect();
+                }
+            }); 
         });
     }
     respond(response) {
         log.info('RESPONSE : ' + response + '\r\n');
-        this.socket.write(response + '\r\n');
+        this.dongleSocket.write(response + '\r\n');
     }
     ok() {
         return 'OK';
@@ -52,15 +66,45 @@ export default class Sim900Stub {
     sendData(data) {
         const d = '+RECEIVE,0,' + data.length + ':\r\n' + data;
         log.info('SENDING DATA : ' + d);
-        this.socket.write(d);
+        this.dongleSocket.write(d);
     }
-    sendHelloPhev() {
-        this.sendData('HELLO PHEV');
+    startProxy() {
+        const op = retry.operation({
+            forever: true,
+            factor: 1,
+        });
+
+        let attempt = 1;
+
+        op.attempt(() => {
+            log.info('Trying to connect to PHEV Controller ' + this.phevHost + ':' + this.phevPort + ' attempt #' + attempt);
+
+            this.phevSocket = net.connect({ port: this.phevPort, host: this.phevHost }, () => {
+                log.info('Connected');
+            });
+            this.phevSocket.on('error', (err) => {
+                attempt++;
+                if (op.retry(err)) {
+                    return;
+                }
+            });
+            this.phevSocket.on('data', this.phevHander.bind(this));
+
+            this.phevSocket.on('close', () => {
+                log.info('PHEV Socket closed');
+                this.startProxy();
+            });
+        });
+    }
+    phevHander(data) {
+        log.info('RECEIVED DATA FROM PHEV : ' + data);
+        this.sendData(data);
     }
     handleData(data) {
         this.buffer += data;
         if (this.buffer.length == this.dataLength) {
             log.info('RECEIVED DATA :' + this.buffer);
+            this.phevSocket.write(this.buffer);
             this.isData = false;
             this.respond('0, SEND OK');
             this.buffer = '';
@@ -91,19 +135,19 @@ export default class Sim900Stub {
                         this.connected = true;
                         this.respond(this.ok());
                         this.respond('0, CONNECT OK');
-                        this.sendHelloPhev();
+                        this.startProxy();
                         break;
                     }
                     default: {
                         if (this.buffer.indexOf('AT+CIPSEND=0,') >= 0) {
                             const len = this.buffer.indexOf('\r');
                             this.dataLength = this.buffer.substr(this.buffer.indexOf(',') + 1, len);
-                            this.socket.write('\r\n>');
+                            this.dongleSocket.write('\r\n>');
                             this.isData = true;
                             log.info('SEND DATA LENGTH :' + this.dataLength);
                             this.buffer = '';
                         } else {
-                            log.error('Unsupported command ' + cmd + ' : ' + buffer);
+                            log.error('Unsupported command ' + cmd + ' : ' + this.buffer);
                         }
                     }
                 }

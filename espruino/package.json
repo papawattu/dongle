@@ -1,0 +1,51 @@
+{
+  "name": "dongle",
+  "version": "1.0.0",
+  "description": "PHEV Dongle code",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/rollup -c",
+    "test": "npm run test-unit",
+    "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-core/register --recursive ./src/adapter",
+    "test-built": "./node_modules/.bin/_mocha ./lib",
+    "docker-build": "docker build -t dongle .",
+    "docker-run": "docker run -p 2222:2222 --rm --name dongle dongle"
+  },  
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/papawattu/dongle.git"
+  },
+  "author": "Jamie Nuttall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/papawattu/dongle/issues"
+  },
+  "homepage": "https://github.com/papawattu/dongle#readme",
+  "dependencies": {
+    "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-resolver": "^1.1.0",
+    "babel-plugin-transform-runtime": "^6.22.0",
+    "babel-polyfill": "^6.22.0",
+    "babel-preset-latest": "^6.22.0",
+    "babel-register": "^6.18.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0",
+    "proxyquire": "^1.7.10",
+    "rollup": "^0.36.3",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-cleanup": "^0.1.4",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-json": "^2.0.1",
+    "rollup-plugin-minify": "^1.0.3",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-replace": "^1.1.1",
+    "sinon": "^1.17.6"
+  }
+}
