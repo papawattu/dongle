@@ -35,6 +35,7 @@ export default class PhevWifi {
         }
     }
     connect(cb) {
+        console.log('Connection to PHEV Wifi : ' + this.host + ' : ' + this.port);
         this.socket = net.connect({host: this.host, port: this.port},()=> {
             cb();
         });
