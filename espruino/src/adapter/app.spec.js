@@ -2,7 +2,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import * as log from 'winston';
-import CommandHandler from './command_handler';
 import App from './app';
 
 const assert = chai.use(chaiAsPromised).assert;
