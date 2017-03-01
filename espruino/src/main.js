@@ -1,21 +1,11 @@
-import SIM900 from './SIM900/SIM900';
-import Adapter from './adapter/adapter';
-import PhevWifi from './adapter/phev_wifi';
+import App from './adapter/app';
 import Wifi from 'Wifi';
+import SIM900 from '../SIM900/SIM900';
+
 
 Serial1.setup(115200, { path: '/dev/ttyS0' });
 
-const wifi = new PhevWifi({
-	wifi: Wifi,
-
-});
-
-const adapter = new Adapter({
-	sim900: SIM900,
-	serial: Serial1,
-	apn: 'everywhere',
-	username: 'eesecure',
-	password: 'secure',
-	wifi: wifi,
-}).connect();
-
+const app = new App({ wifi: Wifi, 
+    serial: Serial1, 
+    sim900: SIM900, 
+    serialNum: process.env.SERIAL });

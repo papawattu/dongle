@@ -1,11 +1,16 @@
 import PhevWifi from './phev_wifi';
 
 export default class CommandHandler {
-    constructor({socket, wifi}) {
+    constructor({socket, serialNum, connected}) {
         this.socket = socket;
         this.state = 'INITIAL';
-        this.phevWifi = wifi;
         this.buffer = '';
+        this.serialNum = serialNum;
+        this.ssid = null;
+        this.password = null;
+        this.host = null;
+        this.port = null;
+        this.connected = connected;
     }
     stripCommand(data) {
         return data.substr(0, data.indexOf('\r'));
@@ -21,14 +26,14 @@ export default class CommandHandler {
         switch (this.state) {
             case 'INITIAL': {
                 if(cmd[0] === 'HELLO' && cmd[1] === 'PHEV') {
-                    this.connect();
+                    this._connect();
                     this.state = 'CONNECT';
                 }
                 break;
             }
             case 'CONNECT': {
                 if(cmd[0] === 'OK') {
-                    this.ssid();
+                    this._ssid();
                     this.state = 'SSID';
                 } else {
                     this.state = 'NOT REGISTERED';
@@ -37,49 +42,39 @@ export default class CommandHandler {
             }
             case 'SSID': {
                 if(cmd[0] === 'SSID') {
-                    this.phevWifi.setSSID(cmd[1]);
-                    this.password();
+                    this.ssid = cmd[1];
+                    this._password();
                     this.state = 'PASSWORD';
                 }
                 break;
             }
             case 'PASSWORD': {
                 if(cmd[0] === 'PASSWORD') {
-                    this.phevWifi.setPassword(cmd[1]);
-                    this.phevWifi.start((err) => {
-                        this.state = 'WIFION';
-                        this.wifiOn();
-                    });
+                    this.password = cmd[1];
+                    this._host();
+                    this.state = 'HOST';
                 }
                 break;
             }
-            case 'WIFION': {
-                if(cmd[0] === 'OK') {
-                    this.host();
-                    this.state = 'HOST';
-                }
-            }
             case 'HOST': {
                 if(cmd[0] === 'HOST') {
-                    this.phevWifi.setHost(cmd[1]);
-                    this.phevWifi.setPort(cmd[2]);
-                    this.phevWifi.connect((err) =>{ 
-                        if(err) {
-                            this.wifiError();
-                            this.state = 'WIFIERROR';
-                            return;    
-                        } else {
-                            this.ready();
-                            this.state = 'READY';
-                        }
-                    });
+                    this.host = cmd[1];
+                    this.port = cmd[2];
+                    this._ready();
+                    this.state = 'READY';
                 } 
                 break;
             }
             case 'READY': {
                 if(cmd[0] === 'OK') {
                     console.log('PHEV ready for commands');
+                    this.connected({ssid: this.ssid,
+                        password: this.password,
+                        host: this.host,
+                        port: this.port,
+                    });
                 }
+                break;
             }
             default: {
                 this.state = 'UNKNOWN';
@@ -90,16 +85,16 @@ export default class CommandHandler {
         console.log('SENDING : ' + data);
         this.socket.write(data + '\r\n');
     }
-    connect() {
-        this.respond('CONNECT ' + process.env.SERIAL); 
+    _connect() {
+        this.respond('CONNECT ' + this.serialNum); 
     }
-    ssid() {
+    _ssid() {
         this.respond('SSID');
     }
-    password() {
+    _password() {
         this.respond('PASSWORD');
     }
-    host() {
+    _host() {
         this.respond('HOST');
     }
     wifiOn() {
@@ -108,7 +103,7 @@ export default class CommandHandler {
     wifiError() {
         this.respond('WIFIERROR');
     }
-    ready() {
+    _ready() {
         this.respond('READY');
     }
 }

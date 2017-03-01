@@ -1,7 +1,7 @@
 import net from 'net';
 
 export default class PhevWifi {
-    constructor({wifi}) {
+    constructor(wifi,{ssid,password,host,port}) {
         this.ssid = null;
         this.password = null;
         this.wifi = wifi;
@@ -25,7 +25,7 @@ export default class PhevWifi {
     start(cb) {
         console.log('Starting WIFI');
         if(process.env.BOARD != 'LINUX') {
-            this.wifi.connect(this.ssid, {password: this.password}, (ap) => { 
+            this.socket = this.wifi.connect(this.ssid, {password: this.password}, (ap) => { 
                 this.wifiConnected = true;
                 cb();
             });
