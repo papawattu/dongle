@@ -49,7 +49,7 @@ export default class WanAdapter {
 	connect(cb) {
 		const gprs = this.sim900.connect(this.serial, undefined, (err) => {
 			if (err) throw err;
-			_this.connectToAPN(gprs);
+			this._connectToAPN(gprs);
 		});
 	}
 	stripCommand(data) {

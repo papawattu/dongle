@@ -15,7 +15,7 @@ const wifi = {};
 const serial = {};
 
 socket.write = sinon.spy();
-sim900.connect = sinon.spy();
+sim900.connect = sinon.stub();
 const connected = sinon.spy();
 		
 const sut = new WanAdapter({
@@ -33,6 +33,10 @@ describe('Command Handler', () => {
 		assert.isNotNull(sut);
 	});
 	it('Should do connect to wan', () => {
+		const gprs = {};
+		gprs.connect = sinon.stub().yields();
+		sim900.connect = sinon.stub().returns(gprs);
+		sinon.stub().yields();
 		sut.connect();
 		assert(sim900.connect.calledOnce);
 		assert(sim900.connect.calledWith(serial));
