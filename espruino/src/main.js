@@ -1,6 +1,6 @@
 import App from './adapter/app';
 import Wifi from 'Wifi';
-import SIM900 from '../SIM900/SIM900';
+import SIM900 from './SIM900/SIM900';
 
 
 Serial1.setup(115200, { path: '/dev/ttyS0' });

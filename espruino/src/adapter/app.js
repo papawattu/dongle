@@ -1,5 +1,6 @@
 import WanAdapter from './wan_adapter';
 import PhevWifi from './phev_wifi';
+import net from 'net';
 
 export default class App {
 	constructor({serial,sim900,serialNum}) {
@@ -15,21 +16,8 @@ export default class App {
 		});
 		
 		//this.wifiAdapter = new WifiAdapter(wifi);
-		
-
-		
-		
-		this.wanAdapter.connect((socket) => {			
-			const commandHandler = new Dialer({
-					socket: socket,
-					serialNum: serialNum, 
-					connected: (config) => {
-						const phevWifi = new PhevWifi(wifi,config);
-						phevWifi.start(()=> {
-							this.phevWifi.connect();
-						});
-					}
-			}); 
+		this.wanAdapter.connect(net,(details) => {			
+			
 		});
 	}
 }

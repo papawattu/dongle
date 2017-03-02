@@ -5,20 +5,20 @@ const counter = 0;
 const connected = 0;
 
 export default class WanAdapter {
-	constructor({serial,
+	constructor({ serial,
 		sim900,
 		apn,
 		username,
 		password,
 		serialNum,
 		serverHost,
-		serverPort}) {
+		serverPort }) {
 		this.serverHost = serverHost;
 		this.serverPort = serverPort;
-		
+
 		this.vehicleHost = null;
 		this.vehiclePort = null;
-		
+
 		this.serial = serial;
 		this.sim900 = sim900;
 		this.apn = apn;
@@ -27,29 +27,26 @@ export default class WanAdapter {
 
 		this.wanSocket = null;
 		this.gprs = null;
-		
+
 		this.state = 'INITIAL';
-        this.buffer = '';
-        this.serialNum = serialNum;
-        this.ssid = null;
-           
+		this.buffer = '';
+		this.serialNum = serialNum;
+		this.ssid = null;
+		this.callback = null;
+
 	}
-	_connectToServer(net) {
-		net.connect({host: this.serverHost, port: this.serverPort}, (socket) => {
-			this.wanSocket = socket;
-			this.wanSocket.on(data,this.handle.bind(this));	
-		});
-	}
-	_connectToAPN(gprs) {
-		gprs.connect(this.apn, this.username, this.password, (err) => {
-			if (err) throw err;
-			this._connectToServer(net);	
-		});
-	}
-	connect(cb) {
+	connect(net, cb) {
+		this.callback = cb;
 		const gprs = this.sim900.connect(this.serial, undefined, (err) => {
-			if (err) throw err;
-			this._connectToAPN(gprs);
+			if (err) throw cb(err);
+			gprs.connect(this.apn, this.username, this.password, (err) => {
+				if (err) throw cb(err);
+				net.connect({ host: this.serverHost, port: this.serverPort }, (socket) => {
+					this.wanSocket = socket;
+					this.wanSocket.on('data', this.handle.bind(this));
+					cb.connected();
+				});
+			});
 		});
 	}
 	stripCommand(data) {
@@ -66,14 +63,14 @@ export default class WanAdapter {
 		switch (this.state) {
 			case 'INITIAL': {
 				if (cmd[0] === 'HELLO' && cmd[1] === 'PHEV') {
-					this._connect();
+					this.connectResponse();
 					this.state = 'CONNECT';
 				}
 				break;
 			}
 			case 'CONNECT': {
 				if (cmd[0] === 'OK') {
-					this._ssid();
+					this.ssidResponse();
 					this.state = 'SSID';
 				} else {
 					this.state = 'NOT REGISTERED';
@@ -83,7 +80,7 @@ export default class WanAdapter {
 			case 'SSID': {
 				if (cmd[0] === 'SSID') {
 					this.ssid = cmd[1];
-					this._password();
+					this.passwordResponse();
 					this.state = 'PASSWORD';
 				}
 				break;
@@ -91,7 +88,7 @@ export default class WanAdapter {
 			case 'PASSWORD': {
 				if (cmd[0] === 'PASSWORD') {
 					this.password = cmd[1];
-					this._host();
+					this.hostResponse();
 					this.state = 'HOST';
 				}
 				break;
@@ -100,7 +97,7 @@ export default class WanAdapter {
 				if (cmd[0] === 'HOST') {
 					this.vehicleHost = cmd[1];
 					this.vehiclePort = cmd[2];
-					this._ready();
+					this.readyResponse();
 					this.state = 'READY';
 				}
 				break;
@@ -108,7 +105,7 @@ export default class WanAdapter {
 			case 'READY': {
 				if (cmd[0] === 'OK') {
 					console.log('PHEV ready for commands');
-					this.connected({
+					this.callback.ready({
 						ssid: this.ssid,
 						password: this.password,
 						host: this.vehicleHost,
@@ -126,25 +123,25 @@ export default class WanAdapter {
 		console.log('SENDING : ' + data);
 		this.wanSocket.write(data + '\r\n');
 	}
-	_connect() {
+	connectResponse() {
 		this.respond('CONNECT ' + this.serialNum);
 	}
-	_ssid() {
+	ssidResponse() {
 		this.respond('SSID');
 	}
-	_password() {
+	passwordResponse() {
 		this.respond('PASSWORD');
 	}
-	_host() {
+	hostResponse() {
 		this.respond('HOST');
 	}
-	wifiOn() {
+	wifiOnResponse() {
 		this.respond('WIFION');
 	}
-	wifiError() {
+	wifiErrorResponse() {
 		this.respond('WIFIERROR');
 	}
-	_ready() {
+	readyResponse() {
 		this.respond('READY');
 	}
 }
