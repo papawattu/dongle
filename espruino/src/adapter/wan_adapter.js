@@ -1,4 +1,3 @@
-import net from 'net';
 
 const EOL = '\r\n';
 const counter = 0;
@@ -12,7 +11,9 @@ export default class WanAdapter {
 		password,
 		serialNum,
 		serverHost,
-		serverPort }) {
+		serverPort,
+		net,
+	 }) {
 		this.serverHost = serverHost;
 		this.serverPort = serverPort;
 
@@ -33,15 +34,16 @@ export default class WanAdapter {
 		this.serialNum = serialNum;
 		this.ssid = null;
 		this.callback = null;
+		this.net = net;
 
 	}
-	connect(net, cb) {
+	connect(cb) {
 		this.callback = cb;
 		const gprs = this.sim900.connect(this.serial, undefined, (err) => {
-			if (err) throw cb(err);
+			if (err) throw cb.error(err);
 			gprs.connect(this.apn, this.username, this.password, (err) => {
-				if (err) throw cb(err);
-				net.connect({ host: this.serverHost, port: this.serverPort }, (socket) => {
+				if (err) throw cb.error(err);
+				this.net.connect({ host: this.serverHost, port: this.serverPort }, (socket) => {
 					this.wanSocket = socket;
 					this.wanSocket.on('data', this.handle.bind(this));
 					cb.connected();

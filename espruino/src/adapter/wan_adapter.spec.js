@@ -15,50 +15,95 @@ const wifi = {};
 const serial = {};
 const net = {};
 const ready = sinon.spy();
-		
+
 socket.write = sinon.spy();
 socket.on = sinon.spy();
-
+net.connect = sinon.stub().yields(socket);
+		
 sim900.connect = sinon.stub().yields();
 const connected = sinon.spy();
-		
+
 const sut = new WanAdapter({
 	serial: serial,
 	sim900: sim900,
-	apn: 'apn', 
+	apn: 'apn',
 	username: 'username',
 	password: 'password',
 	serverHost: 'host',
 	serverPort: 1234,
-	serialNum: '1234' });
+	serialNum: '1234',
+	net: net,
+});
 
 describe('Command Handler', () => {
 	it('Should do bootstrap', () => {
 		assert.isNotNull(sut);
 	});
-	it('Should do connect to wan', () => {
+	it('Should do connect to wan', (done) => {
 		const gprs = {};
-		net.connect = sinon.stub().yields(socket);
 		gprs.connect = sinon.stub().yields();
 		sut.sim900.connect = sinon.stub().returns(gprs);
-		
-		sut.connect(net,{connected: ()=>{
-			assert(sim900.connect.calledOnce);
-			assert(sim900.connect.calledWith(serial));
-		}, ready: ready});
-		sim900.connect.yield();		
+
+		sut.connect({
+			connected: () => {
+				assert(sim900.connect.calledOnce);
+				assert(sim900.connect.calledWith(serial));
+				done();
+			}, ready: ready
+		});
+		sim900.connect.yield();
+	});
+	it('Should handle sim900 error', (done) => {
+		const gprs = {};
+		gprs.connect = sinon.stub().yields();
+		sut.sim900.connect = sinon.stub().returns(gprs);
+
+		sut.connect({
+			connected: () => {
+				fail('should not call connect')
+			},
+			ready: () => {
+				fail('should not call ready');
+			}, error: (err) => {
+				assert(err);
+				assert(sim900.connect.calledOnce);
+				assert(sim900.connect.calledWith(serial));
+				done();
+			}
+		});
+		sim900.connect.yield(new Error('Error'));
+	});
+	it('Should handle sim900 apn error', (done) => {
+		const gprs = {};
+		gprs.connect = sinon.stub().yields(new Error('Error'));
+		sut.sim900.connect = sinon.stub().returns(gprs);
+
+		sut.connect({
+			connected: () => {
+				fail('should not call connect');
+			}, ready: () => {
+				fail('should not call ready');
+			}, error: (err) => {
+				assert(err);
+				assert(sim900.connect.calledOnce);
+				assert(sim900.connect.calledWith(serial));
+				done();
+			}
+		});
+		sim900.connect.yield();
 	});
 	it('Should do CONNECT', (done) => {
 		const gprs = {};
-		net.connect = sinon.stub().yields(socket);
 		gprs.connect = sinon.stub().yields();
 		sut.sim900.connect = sinon.stub().returns(gprs);
-		
-		sut.connect(net,{connected: () => {
-			assert(sim900.connect.calledOnce);
-			assert(sim900.connect.calledWith(serial));
-			done();
-		},ready: ready});
+
+		sut.connect({
+			connected: () => {
+				assert(sim900.connect.calledOnce);
+				assert(sim900.connect.calledWith(serial));
+				done();
+			}, ready: ready
+		});
 		sim900.connect.yield();
 		sut.wanSocket.on.yield('CONNECT 1234\r\n');
 	});
@@ -84,8 +129,8 @@ describe('Command Handler', () => {
 		sut.handle('HOST abcd 1234\r\n');
 		assert(socket.write.calledWith('READY\r\n'));
 	});
-	it('Should called connected callback', () => {
+	it('Should call ready callback', () => {
 		sut.handle('OK\r\n');
-		assert(sut.callback.ready.calledWith({ssid: 'abcd',password: 'abcd',host: 'abcd',port: '1234'}));
+		assert(sut.callback.ready.calledWith({ ssid: 'abcd', password: 'abcd', host: 'abcd', port: '1234' }));
 	});
 });
