@@ -118,19 +118,19 @@ export default class Sim900Stub {
 
             if (this.buffer.indexOf('\r') != -1) {
                 log.info('COMMAND : ' + this.buffer);
-                const cmd = this.stripCommand(this.buffer);
-                switch (cmd) {
+                const cmd = this.stripCommand(this.buffer).split('=');
+                switch (cmd[0]) {
                     case 'ATE0': this.respond(this.ok()); break;
                     case 'AT+CPIN?': this.respond(this.ok()); break;
-                    case 'AT+CGATT=1': this.respond(this.ok()); break;
+                    case 'AT+CGATT': this.respond(this.ok()); break;
                     case 'AT+CIPSHUT': this.respond('SHUT OK'); break;
                     case 'AT+CIPSTATUS': this.respond('STATE: IP INITIAL'); break;
-                    case 'AT+CIPMUX=1': this.respond(this.ok()); break;
-                    case 'AT+CIPHEAD=1': this.respond(this.ok()); break;
-                    case 'AT+CSTT="everywhere", "eesecure", "secure"': this.respond(this.ok()); break;
+                    case 'AT+CIPMUX': this.respond(this.ok()); break;
+                    case 'AT+CIPHEAD': this.respond(this.ok()); break;
+                    case 'AT+CSTT': this.respond(this.ok()); break;
                     case 'AT+CIICR': this.respond(this.ok()); break;
                     case 'AT+CIFSR': this.respond('1.1.1.1'); break;
-                    case 'AT+CIPSTART=0,"TCP","localhost",80': {
+                    case 'AT+CIPSTART': {
                         log.info('Connected to WAN');
                         this.connected = true;
                         this.respond(this.ok());

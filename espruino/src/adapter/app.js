@@ -24,7 +24,7 @@ export default class App {
 				}, ready: (details) => {
 					console.log('details ssid ' + details.ssid + ' password ' + details.password);
 				}, error: (err) => {
-
+					console.log('Error : ' + err);
 				}
 			});
 	}
