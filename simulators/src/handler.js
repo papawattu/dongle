@@ -18,6 +18,11 @@ export default class Handler {
     constructor() {
 
     }
+    action(data) {
+        const response = Uint8Array.from([0x6f,0x04,0x01,0x00,0x00,0x00]);
+        response[3] = data[3];
+        return response;
+    }
     handle(command) {
         console.log('Command ' + command.cmd);
         switch (command.cmd) {
@@ -41,10 +46,5 @@ export default class Handler {
                 console.log('Unsupported Command ' + command.cmd);
             }
         }
-    }
-    action(data) {
-        const response = Uint8Array.from([0x6f,0x04,0x01,0x00,0x00,0x00]);
-        response[3] = data[3];
-        return response;
     }
 }
