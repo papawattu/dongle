@@ -14,10 +14,10 @@ export default class Handler {
 
     }
     handle(command) {
+        console.log('Command ' + command.cmd);
         switch (command.cmd) {
             case Constants.CMD_START: {
                 return Uint8Array.from([0x2f,0x04,0x01,0x01,0x00,0x35]);
-                break;
             }
             case Constants.CMD_PING: {
                 const response = Uint8Array.from([0x9f,0x04,0x01,0x00,0x06,0x00]);
@@ -26,10 +26,12 @@ export default class Handler {
                 response[3] = num;
                 response[5] = checksum(response);
                 return response;
-                break;
             }
             case Constants.CMD_ACTION: {
                 break;
+            }
+            default: {
+                console.log('Unsupported Command ' + command.cmd);
             }
         }
     }
