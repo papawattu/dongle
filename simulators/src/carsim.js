@@ -13,8 +13,11 @@ export default class CarSim {
         this.server = net.createServer((socket)=> {
             console.log('new connection');
             socket.on('data',(data) => {
-                console.log('Got data ' + data.toString('hex'));
-                socket.write(this.parser.process(data));
+                const response = this.parser.process(data);
+                
+                if(response.byteLength > 0) {
+                    socket.write(response);
+                }
             });
             
         })

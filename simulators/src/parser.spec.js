@@ -4,13 +4,15 @@ import * as log from 'winston';
 import Parser from './parser';
 
 const assert = chai.assert;
-const handler = sinon.spy();
+const handler = sinon.stub();
 
 const sut = new Parser(handler);
 
 describe('Parser', () => {
     beforeEach(() => {
         handler.reset();
+        handler.returns(Uint8Array.from([]));
+    
     });
     it('Should not be null', () => {
         assert.isNotNull(sut);
@@ -75,7 +77,8 @@ describe('Parser', () => {
     it('Should return from a start command', () => {
         const data = Uint8Array.from([0xf2, 0x0a, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff]);
         const expected = Uint8Array.from([0x2f, 0x04, 0x01, 0x01, 0x000, 0x35]);
-
+        handler.returns(Uint8Array.from([0x2f, 0x04, 0x01, 0x01, 0x000, 0x35]));
+    
         assert.deepEqual(sut.process(data), expected);
     });
     it('Should not parse incomplete command', () => {

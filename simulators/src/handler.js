@@ -22,7 +22,7 @@ export default class Handler {
             case Constants.CMD_PING: {
                 const response = Uint8Array.from([0x9f,0x04,0x01,0x00,0x06,0x00]);
                 const num = command.data[3];
-                console.log(num);
+
                 response[3] = num;
                 response[5] = checksum(response);
                 return response;
