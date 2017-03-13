@@ -9,6 +9,9 @@ import checksum from './checksum';
 
 // f9 04 00 02 00 ff
 // 9f 04 01 02 06 ac 
+
+// f6 04 00 aa 00 a4
+// 6f 04 01 aa 00 1e
 export default class Handler {
     constructor() {
 
@@ -28,7 +31,10 @@ export default class Handler {
                 return response;
             }
             case Constants.CMD_ACTION: {
-                break;
+                const response = Uint8Array.from([0x6f,0x04,0x01,0xaa,0x00,0x00]);
+                
+                response[5] = checksum(response);
+                return response;
             }
             default: {
                 console.log('Unsupported Command ' + command.cmd);
