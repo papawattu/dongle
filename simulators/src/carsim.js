@@ -5,7 +5,7 @@ import Handler from './handler';
 export default class CarSim {
     constructor() {
         this.handler = new Handler().handle;
-        this.parser = new Parser(this.handler.bind(this));
+        this.parser = new Parser(this.handler);
         this.server = null;
         this.buffer = Buffer.alloc(0);
     }
