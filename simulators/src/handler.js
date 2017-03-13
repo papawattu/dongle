@@ -32,7 +32,7 @@ export default class Handler {
                 return response;
             }
             case Constants.CMD_ACTION: {
-                console.log('Command ' + command.cmd + ' action ' + command.data[3]);
+                console.log('Command ' + command.cmd + 'length ' + command.dataLength + ' action ' + command.data[3] + ' ' + command.data[2]);
         
                 const response = action(command.data);
                 response[5] = checksum(response);
