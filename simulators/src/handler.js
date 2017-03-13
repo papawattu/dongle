@@ -38,7 +38,7 @@ export default class Handler {
                 return response;
             }
             case Constants.CMD_ACTION: {
-                const response = this.action(command.data);
+                const response = this.action(command.data).bind(this);
                 response[5] = checksum(response);
                 return response;
             }
