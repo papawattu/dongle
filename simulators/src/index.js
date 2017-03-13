@@ -6,6 +6,11 @@ const PORT = process.env.PORT || 2222;
 
 //new Sim900Stub({host :HOST, port: PORT}).connect();
 
-new CarSim().start(()=> {
-    console.log('Connected');
-});
+console.log(process.env.NODE_ENV);
+
+if(process.env.NODE_ENV !== 'test') {
+
+    new CarSim().start(()=> {
+    
+    });
+}
