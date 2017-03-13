@@ -18,19 +18,14 @@ export default class Handler {
     constructor() {
 
     }
-    action(data) {
-        const response = Uint8Array.from([0x6f,0x04,0x01,0x00,0x00,0x00]);
-        response[3] = data[3];
-        return response;
-    }
     handle(command) {
         console.log('Command ' + command.cmd);
         switch (command.cmd) {
             case Constants.CMD_START: {
-                return Uint8Array.from([0x2f,0x04,0x01,0x01,0x00,0x35]);
+                return Uint8Array.from([0x2f, 0x04, 0x01, 0x01, 0x00, 0x35]);
             }
             case Constants.CMD_PING: {
-                const response = Uint8Array.from([0x9f,0x04,0x01,0x00,0x06,0x00]);
+                const response = Uint8Array.from([0x9f, 0x04, 0x01, 0x00, 0x06, 0x00]);
                 const num = command.data[3];
 
                 response[3] = num;
@@ -38,7 +33,7 @@ export default class Handler {
                 return response;
             }
             case Constants.CMD_ACTION: {
-                const response = this.action(command.data).bind(this);
+                const response = action(command.data);
                 response[5] = checksum(response);
                 return response;
             }
@@ -47,4 +42,9 @@ export default class Handler {
             }
         }
     }
+}
+function action(data) {
+    const response = Uint8Array.from([0x6f, 0x04, 0x01, 0x00, 0x00, 0x00]);
+    response[3] = data[3];
+    return response;
 }
