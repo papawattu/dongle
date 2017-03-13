@@ -19,7 +19,6 @@ export default class Handler {
 
     }
     handle(command) {
-        console.log('Command ' + command.cmd);
         switch (command.cmd) {
             case Constants.CMD_START: {
                 return Uint8Array.from([0x2f, 0x04, 0x01, 0x01, 0x00, 0x35]);
@@ -33,6 +32,8 @@ export default class Handler {
                 return response;
             }
             case Constants.CMD_ACTION: {
+                console.log('Command ' + command.cmd + ' action ' + comand.data[3]);
+        
                 const response = action(command.data);
                 response[5] = checksum(response);
                 return response;
