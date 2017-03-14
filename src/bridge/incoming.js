@@ -13,8 +13,6 @@ export default class Incoming {
             this.socket = socket;
             console.log('new connection ' + this.outgoing);
             this.socket.on('data', this.outgoing.send.bind(this));
-        
-
         })
         this.server.on('error', (err) => {
             throw err;
