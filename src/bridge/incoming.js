@@ -13,7 +13,7 @@ export default class Incoming {
         this.server = this.net.createServer((socket) => {
             console.log('new connection');
             this.socket = socket;
-            this.socket.on('data', this.outgoing.send.bind(self));
+            this.socket.on('data', self.outgoing.send.bind(self));
         
 
         })
