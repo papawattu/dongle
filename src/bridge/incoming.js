@@ -8,11 +8,12 @@ export default class Incoming {
         this.socket = null;
     }
     startServer(cb) {
+        const self = this;
         console.log('Starting Server : ' + this.host + ' : ' + this.port);
         this.server = this.net.createServer((socket) => {
             console.log('new connection');
             this.socket = socket;
-            this.socket.on('data', this.outgoing.send.bind(this));
+            this.socket.on('data', this.outgoing.send.bind(self));
         
 
         })
