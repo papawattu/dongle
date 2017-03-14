@@ -8,10 +8,8 @@ export default class App {
         this.outgoingHost = outgoingHost;
         this.outgoingPort = outgoingPort;
         this.incomingPort = incomingPort;
-        this.outgoing = null;
-        this.incoming = new Incoming({ net, port: incomingPort, outgoing: this.outgoing })
         this.outgoing = new Outgoing({ net, host: outgoingHost, port: outgoingPort, incoming: this.incoming });
-
+        this.incoming = new Incoming({ net, port: incomingPort, outgoing: this.outgoing })
         this.outgoing.connect((err) => {
             if(err) throw err;
             this.incoming.startServer((err) => {
