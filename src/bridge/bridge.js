@@ -10,10 +10,11 @@ export default class Bridge {
         this.clientPort = clientPort;
         this.serverHost = serverHost;
         this.serverPort = serverPort;
-        this.receive = this.init;
-        this.net = net;
-        //this.client = new Outgoing({ net, host: clientHost, port: clientPort, receive: this.receive.bind(this) });
-        this.server = new Outgoing({ net: this.net, host: serverHost, port: serverPort, receive: this.receive.bind(this) })
+        this.serverReceive = this.serverInit;
+        this.clientReceive = this.clientInit;
+        //this.net = net;
+        this.client = new Outgoing({ net, host: clientHost, port: clientPort, receive: this.clientReceive.bind(this) });
+        this.server = new Outgoing({ net, host: serverHost, port: serverPort, receive: this.serverReceive.bind(this) })
 
 
         this.initHandler = new InitHandler({
@@ -24,12 +25,13 @@ export default class Bridge {
                 this.server.close();
             },
             readyCallback: () => {
-                this.receive = this.commandLoop;
+                this.serverReceive = this.commandLoop;
             }
         });
 
         this.commandHandler = new CommandHandler({
             writeCallback: this.server.send.bind(this.server),
+            sendCommand: this.client.send.bind(this.client),
         });
         this.server.connect((err) => {
             if (err) throw err;
@@ -37,10 +39,13 @@ export default class Bridge {
         });
 
     }
-    commandLoop(data) {
-        this.server.send(this.commandHandler.handle(data));
+    serverCommandLoop(data) {
+        this.commandHandler.handle(data);
     }
-    init(data) {
+    serverInit(data) {
         this.initHandler.handle(data);
+    }
+    clientInit(data) {
+
     }
 }
