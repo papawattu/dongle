@@ -5,18 +5,20 @@ import CommandHandler from '../external_controller/command_handler';
 
 
 export default class Bridge {
-    constructor({ net,clientHost = '192.168.8.46', clientPort = 8080, serverHost = 'localhost', serverPort = 1974 } = {}) {
-        this.clientHost = clientHost;
-        this.clientPort = clientPort;
+    constructor({ net,clientHost = 'localhost', clientPort = 8080, serverHost = 'localhost', serverPort = 1974 } = {}) {
+        
         this.serverHost = serverHost;
         this.serverPort = serverPort;
         this.serverReceive = this.serverInit;
-        this.clientReceive = this.clientInit;
-        //this.net = net;
-        this.client = new Outgoing({ net, host: clientHost, port: clientPort, receive: this.clientReceive.bind(this) });
+  
         this.server = new Outgoing({ net, host: serverHost, port: serverPort, receive: this.serverReceive.bind(this) })
+  
+        this.clientHost = clientHost;
+        this.clientPort = clientPort;
+        this.clientReceive = this.clientInit;
 
-
+        this.client = new Outgoing({ net, host: clientHost, port: clientPort, receive: this.clientReceive.bind(this) });
+  
         this.initHandler = new InitHandler({
             serialNum: '1234', 
             writeCallback: this.server.send.bind(this.server), 
