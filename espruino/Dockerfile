@@ -6,7 +6,7 @@ RUN make
 RUN chmod +x espruino
 COPY scripts/start.sh .
 RUN sed -i 's/\r//' start.sh
-COPY espruino/lib/main.min.js .
+COPY lib/main.min.js .
 RUN chmod +x start.sh
 CMD ["bash","-c","./start.sh"]
 EXPOSE 2222

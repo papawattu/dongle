@@ -1,6 +1,6 @@
-import App from './bridge/app.js';
+import net from 'net';
+import Bridge from './bridge/bridge.js';
 
-const app = new App({outgoingHost: process.env.OUTGOING_HOST,
-    outgoingPort: process.env.OUTGOING_PORT,
-    incomingPort: process.env.INCOMING_PORT
-});
+if(process.env.NODE_ENV !== 'test') {
+    const bridge = new Bridge({net});
+}

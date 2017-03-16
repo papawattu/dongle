@@ -6,13 +6,12 @@ const assert = chai.assert;
 
 const net = {};
 const socket = {};
-const incoming = {};
 net.connect = sinon.stub().returns(socket);
 socket.on = sinon.spy();
 socket.write = sinon.spy();
-incoming.send = sinon.stub();
+const receive = sinon.stub();
 
-const sut = new Outgoing({host: 'localhost',port: 8080, net: net,incoming});
+const sut = new Outgoing({host: 'localhost',port: 8080, net: net,receive: receive});
 
 describe('Outgoing', () => {
 	beforeEach(() => {
@@ -37,6 +36,6 @@ describe('Outgoing', () => {
 	it('Should forward incoming resposes back',() => {
 		socket.on.yield('1234');
 
-		assert(incoming.send.calledWith('1234'));
+		assert(receive.calledWith('1234'));
 	});
 });
