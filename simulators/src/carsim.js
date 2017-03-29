@@ -19,7 +19,6 @@ export default class CarSim {
                     socket.write(response);
                 }
             });
-            
         })
         this.server.on('error', (err) => {
             throw err;
@@ -33,5 +32,4 @@ export default class CarSim {
     stop(cb) {
         this.server.close(cb);
     }
-
 }
