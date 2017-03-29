@@ -12,16 +12,16 @@ export default class App {
         this.vehicleClient = new VehicleClient({host: vehicleHost,port: vehiclePort, receive: this.vehicleReceive.bind(this),net});
 
         this.mqttClient.connect(() => {
-            this.vehicleClient.connect(() => {
-                Dispatcher.start(this.mqttClient);
-            });
+            Dispatcher.start(this.mqttClient);
         });
         
     }
     mqttReceive(topic,message) {
         const cmd = Dispatcher.incoming(message);
         if(cmd != null) {
-            this.vehicleClient.send(cmd);
+            this.vehicleClient.connect(() => {
+                this.vehicleClient.send(cmd);
+            });
         }
     }
     vehicleReceive(message) {
