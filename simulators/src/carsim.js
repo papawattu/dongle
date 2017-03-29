@@ -19,6 +19,13 @@ export default class CarSim {
                     socket.write(response);
                 }
             });
+            socket.on('error',(data) => {
+                console.log(data);
+            });
+            socket.on('close',(data) => {
+                console.log(data);
+            });
+
         })
         this.server.on('error', (err) => {
             throw err;

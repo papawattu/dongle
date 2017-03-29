@@ -1,6 +1,11 @@
 export default class Dispatcher {
 	static outgoing(message) {
-		return 'RECEIVED ' + message.toString('base64');
+		
+		const encodedData = message.toString('base64');
+
+		console.log(`RECEIVED ${encodedData.toString()} as hex ${message.toString('hex')}`);
+		
+		return 'RECEIVED ' + encodedData;
 	}
 
 	static incoming(message) {
@@ -13,7 +18,7 @@ export default class Dispatcher {
 		
 			return Buffer.from(data,'base64');
 		} else {
-			return '';
+			return null;
 		}
 		
 	}

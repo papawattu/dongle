@@ -25,6 +25,7 @@ export default class App {
         }
     }
     vehicleReceive(message) {
+        console.log(message.toString('hex'));
         this.mqttClient.send(Dispatcher.outgoing(message));
     }
 }

@@ -29,6 +29,7 @@ export default class Parser {
             }
         } else {
             console.log('Command not recognised : ' + command.cmd);
+            this.buffer = new Uint8Array(0);
             return null;
         }
     }
@@ -38,7 +39,7 @@ export default class Parser {
     process(data) {
         let response = new Uint8Array(0);
         let command = null;
-
+        console.log(`1) Data ${data.toString('hex')} Buffer ${this.buffer.toString('hex')}`);
         this.buffer = this.appendBuffer(this.buffer, data);
 
         command = this.findCommand(this.buffer);
@@ -62,6 +63,8 @@ export default class Parser {
                 command = this.findCommand(this.buffer);
             }
         }
+        console.log(`2) Data ${data.toString('hex')} Buffer ${this.buffer.toString('hex')}`);
+        
         return response;
     }
 
