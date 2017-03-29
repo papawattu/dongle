@@ -11,7 +11,7 @@ switch (mode) {
         break;
     }
     default: {
-        new App({mqttHost: 'mqtt://www.wattu.com',mqttPort: 8888,topic: 'phev/papawattu',vehicleHost: '192.168.1.46',vehiclePort: 8080});
+        new App({mqttHost: 'ubuntu.wattu.com',mqttPort: 8888,topic: 'phev/papawattu',vehicleHost: '192.168.1.46',vehiclePort: 8080});
     }
     
 }
