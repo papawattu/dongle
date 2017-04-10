@@ -1,8 +1,8 @@
 import App from './app';
 
 const mode = process.env.NODE_ENV || 'production';
-const mqttHost = process.env.MQTTHOST || 'ubuntu.wattu.com';
-const mqttPort = process.env.MQTTPORT || 8888;
+const mqttHost = process.env.MQTTHOST || 'jenkins.wattu.com';
+const mqttPort = process.env.MQTTPORT || 1883;
 const topic = process.env.TOPIC || 'phev/papawattu';
 const vehicleHost = process.env.VEHICLEHOST || '192.168.8.46';
 const vehiclePort = process.env.VEHICLEPORT || 8080;
