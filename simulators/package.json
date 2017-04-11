@@ -7,7 +7,7 @@
     "start": "npm run build && node lib/index.js",
     "build": "./node_modules/.bin/babel src --out-dir lib --source-maps inline --copy-files",
     "test": "npm run test-unit",
-    "test-unit": "./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-core/register --recursive ./src",
+    "test-unit": "cross-env NODE_ENV=test ./node_modules/.bin/_mocha --require babel-polyfill --compilers js:babel-core/register --recursive ./src",
     "docker-build": "npm run build && docker build -t simulators .",
     "docker-run": "npm run docker-build && docker run -e \"DONGLE_2222_TCP_ADDR=192.168.99.100\" -e \"PHEV_1974_TCP_ADDR=192.168.99.100\" --rm --name simulators simulators"
   },
@@ -31,6 +31,7 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "babel-cli": "^6.23.0",
     "babel-core": "^6.21.0",
     "babel-plugin-resolver": "^1.1.0",
@@ -39,9 +40,14 @@
     "babel-preset-eslatest-node6": "^1.0.1",
     "babel-preset-latest": "^6.22.0",
     "babel-register": "^6.18.0",
+=======
+    "babel-cli": "^6.24.0",
+>>>>>>> 50661b6dd6cc3bcccbf3f3831250c8b0ccbf8bfd
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
+    "cross-env": "^3.2.3",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7"
   }
 }
