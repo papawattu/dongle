@@ -12,15 +12,22 @@ export default class Dispatcher {
 		const cmd = message.toString().split(' ')[0];
 		const data = message.toString().split(' ')[1] || '';
 		
-		if(cmd === 'SEND') {
-			const decodedData = Buffer.from(data,'base64');
-			console.log(`CMD ${cmd} DATA ${data} DEC ${decodedData.toString('hex')}`);
-		
-			return Buffer.from(data,'base64');
-		} else {
-			return null;
+		switch(cmd) {
+			case 'SEND': {
+				const decodedData = Buffer.from(data, 'base64');
+				console.log(`CMD ${cmd} DATA ${data}DEC ${decodedData.toString('hex')}`);
+
+				return Buffer.from(data, 'base64');
+			}
+			case 'PING': {
+				const sequence = data;
+				console.log(`CMD ${cmd} DATA ${data}`);
+				return Buffer.from(data, 'base64');
+			}
+			default: {
+				return null;
+			}
 		}
-		
 	}
 	static start(client) {
 		client.send('CONNECTED');
