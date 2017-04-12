@@ -16,6 +16,7 @@ export default class Client {
     }
     send(data) {
         this.socket.write(data);
+        this.socket.end();
     }
     close() {
         this.socket.end();

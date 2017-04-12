@@ -19,7 +19,7 @@ client.on = sinon.stub();
 client.subscribe = sinon.spy();
 mqtt.connect = sinon.stub().returns(client);
 
-const sut = new MqttClient({topic,host,port,mqtt});
+const sut = new MqttClient({topic,host,port,mqtt,receive});
 
 describe('MQTT client', () => {
 	beforeEach(() => {
@@ -33,7 +33,7 @@ describe('MQTT client', () => {
 		sut.connect(cb);
 		client.on.withArgs('connect').yield();
         assert(mqtt.connect.calledOnce);
-        assert(client.on.calledTwice);
+        assert(client.on.calledThrice);
 	});
     it('Should subscribe on connection', () => {
 	    assert(client.subscribe.calledWith(topic));
@@ -43,8 +43,8 @@ describe('MQTT client', () => {
         assert(client.publish.calledOnce);
         assert(client.publish.calledWith(topic,'Hello'));
 	});
-    it.skip('Should receive', () => {
-        client.on.yield(topic,'Again');
+    it('Should receive', () => {
+        client.on.withArgs('message').yield('Again');
         assert(receive.calledWith('Again'));
 	});
 });
