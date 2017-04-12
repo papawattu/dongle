@@ -33,7 +33,7 @@ describe('MQTT client', () => {
 		sut.connect(cb);
 		client.on.withArgs('connect').yield();
         assert(mqtt.connect.calledOnce);
-        assert(client.on.calledTwice);
+        assert(client.on.calledThrice);
 	});
     it('Should subscribe on connection', () => {
 	    assert(client.subscribe.calledWith(topic));

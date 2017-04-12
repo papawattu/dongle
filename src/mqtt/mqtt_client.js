@@ -10,10 +10,12 @@ export default class MqttClient {
   connect(cb) {
     this.client = this.mqtt.connect({host: this.host, port: this.port});
     this.client.on('connect', () => {
-      this.client.subscribe(this.topic);
-      cb();
+      this.client.subscribe(this.topic,cb);
     });
     this.client.on('message', this.receive);
+    this.client.on('error', (err) => {
+        throw Error(err);
+    });
   }
   send(message) {
     if(this.client === null) throw Error('Not connected');

@@ -11,12 +11,15 @@ export default class App {
         console.log(`MQTT host       ${mqttHost} port ${mqttPort}
 Topic           ${topic}
 Vehicle Host    ${vehicleHost} port ${vehiclePort}
-Dongle ID ${dongleId}`);
+Dongle ID       ${dongleId}`);
 
         this.mqttClient = new MqttClient({topic,host: mqttHost, port: mqttPort, receive: this.mqttReceive.bind(this),mqtt});
         this.vehicleClient = new VehicleClient({host: vehicleHost,port: vehiclePort, receive: this.vehicleReceive.bind(this),net});
 
-        this.mqttClient.connect(() => {
+        this.mqttClient.connect((err) => {
+            if(err) {
+                throw err;
+            }
             Dispatcher.start(this.mqttClient,dongleId);
         });
         
