@@ -1,6 +1,6 @@
 export default function(data) {
     let b = 0;
-    let j = data.buffer.byteLength;
+    const j = data.buffer.byteLength;
 
     for (let i = 0;i < j; i++)
     {

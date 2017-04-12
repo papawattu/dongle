@@ -22,14 +22,14 @@ export default class Dispatcher {
 			case 'PING': {
 				const sequence = data;
 				console.log(`CMD ${cmd} DATA ${data}`);
-				return Buffer.from(data, 'base64');
+				return Buffer.from([0xf9,0x04,0x00,0x00,0x00]);
 			}
 			default: {
 				return null;
 			}
 		}
 	}
-	static start(client) {
-		client.send('CONNECTED');
+	static start(client,id) {
+		client.send('CONNECTED ' + id);
 	}
 }
