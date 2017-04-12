@@ -1,3 +1,4 @@
+import checksum from '../util/checksum';
 export default class Dispatcher {
 	static outgoing(message) {
 		
@@ -20,9 +21,11 @@ export default class Dispatcher {
 				return Buffer.from(data, 'base64');
 			}
 			case 'PING': {
-				const sequence = data;
-				console.log(`CMD ${cmd} DATA ${data}`);
-				return Buffer.from([0xf9,0x04,0x00,0x00,0x00]);
+				const ping = Uint8Array.from([0xf9,0x04,0x00,0x00,0x00,0x00]);
+                ping[3] = data;
+                ping[5] = checksum(ping);
+                console.log(`CMD ${cmd} DATA ${data}`);
+                return Buffer.from(ping);
 			}
 			default: {
 				return null;

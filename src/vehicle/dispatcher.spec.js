@@ -26,4 +26,8 @@ describe('Dispatcher', () => {
 		const result = Dispatcher.outgoing(Buffer.from('Nuttall'));
 		assert.equal(result,'RECEIVED TnV0dGFsbA==');
 	});
+    it('Should handle ping', () => {
+        const result = Dispatcher.incoming(Buffer.from('PING 1'));
+        assert.deepEqual(result,Buffer.from([0xf9,0x04,0x00,0x01,0x00,0xfe]));
+    });
 });
