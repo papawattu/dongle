@@ -1,4 +1,4 @@
-git config --global http.proxy import net from 'net';
+import net from 'net';
 import mqtt from 'mqtt';
 
 import MqttClient from './mqtt/mqtt_client';
