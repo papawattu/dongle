@@ -1,9 +1,13 @@
 import App from './app';
 
 const mode = process.env.NODE_ENV || 'production';
+const mqttHost = process.env.MQTTHOST || 'jenkins.wattu.com';
+const mqttPort = process.env.MQTTPORT || 1883;
+const topic = process.env.TOPIC || 'phev/papawattu';
+const vehicleHost = process.env.VEHICLEHOST || '192.168.8.46';
+const vehiclePort = process.env.VEHICLEPORT || 8080;
 
-console.log(`Starting app in ${mode} mode.`);
-
+console.log(`Started in ${mode} mode.`);
 switch (mode) {
     case 'test': break;
     case 'development': {
@@ -11,7 +15,7 @@ switch (mode) {
         break;
     }
     default: {
-        new App({mqttHost: 'ubuntu.wattu.com',mqttPort: 8888,topic: 'phev/papawattu',vehicleHost: '192.168.1.46',vehiclePort: 8080});
+        new App({mqttHost: mqttHost,mqttPort: mqttPort,topic: topic, vehicleHost: vehicleHost,vehiclePort: vehiclePort});
     }
     
 }
