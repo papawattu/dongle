@@ -9,6 +9,7 @@ const socket = {};
 net.connect = sinon.stub().returns(socket);
 socket.on = sinon.spy();
 socket.write = sinon.spy();
+socket.end = sinon.spy();
 const receive = sinon.stub();
 
 const sut = new Client({host: 'localhost',port: 8080, net: net,receive: receive});
