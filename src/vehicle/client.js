@@ -11,6 +11,12 @@ export default class Client {
         this.socket = this.net.connect({host: this.host, port: this.port},()=> {
             console.log('Connected');
             this.socket.on('data', this.receive);
+            this.socket.on('error', (err) => {
+                console.log('Error ' + err);
+            });
+            this.socket.on('end', (err) => {
+                console.log('Ended ' + err);
+            });
             cb()
         });
     }

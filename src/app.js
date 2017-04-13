@@ -33,7 +33,7 @@ Dongle ID       ${dongleId}`);
         }
     }
     vehicleReceive(message) {
-        console.log(message.toString('hex'));
+        console.log('Vehicle receive : ' + message.toString('hex'));
         this.mqttClient.send(Dispatcher.outgoing(message));
     }
 }
