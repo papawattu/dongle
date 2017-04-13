@@ -32,9 +32,10 @@ export default class Client {
     }
     startPing() {
         setInterval(() => {
+            console.log('ping ' + this.seq);
             this.socket.write(Buffer.from([0xf9,0x04,0x00,this.seq,0x00,this.chksum]));
             this.seq = (this.seq + 1) % 0xff;
             this.chksum = (this.chksum + 1) % 0xff;
-        },100);
+        },50);
     }
 }
