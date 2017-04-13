@@ -27,9 +27,9 @@ Dongle ID       ${dongleId}`);
     mqttReceive(topic,message) {
         const cmd = Dispatcher.incoming(message);
         if(cmd != null) {
-            this.vehicleClient.connect(() => {
+          //  this.vehicleClient.connect(() => {
                 this.vehicleClient.send(cmd);
-            });
+          //  });
         }
     }
     vehicleReceive(message) {
