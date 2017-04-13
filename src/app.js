@@ -1,7 +1,7 @@
 import net from 'net';
 import mqtt from 'mqtt';
 
-import MqttClient from 'mqtt-client';
+import MqttClient from './mqtt/mqtt_client';
 import Dispatcher from './vehicle/dispatcher';
 import VehicleClient from './vehicle/client';
 
