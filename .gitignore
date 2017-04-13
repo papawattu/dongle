@@ -1,3 +1,6 @@
+.idea/
 .vscode/
 node_modules/
 lib/
+npm-debug.log
+simulators/node_modules/

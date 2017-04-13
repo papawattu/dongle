@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "mqtt": "^2.5.0",
-    "mqtt-client": "papawattu/mqtt"
+    "winston": "^2.3.1"
   }
 }
