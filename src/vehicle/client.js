@@ -14,8 +14,8 @@ export default class Client {
             this.socket.on('error', (err) => {
                 console.log('Error ' + err);
             });
-            this.socket.on('end', (err) => {
-                console.log('Ended ' + err);
+            this.socket.on('end', () => {
+                console.log('Ended ');
             });
             cb()
         });
