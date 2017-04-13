@@ -11,6 +11,7 @@ export default class Client {
     connect(cb) {
         console.log('Connecting to : ' + this.host + ' : ' + this.port);
         this.socket = this.net.connect({host: this.host, port: this.port},()=> {
+            this.socket.setKeepAlive(true);
             console.log('Connected');
             this.startPing();
             this.socket.on('data', this.receive);
