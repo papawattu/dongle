@@ -16,6 +16,9 @@ Dongle ID       ${dongleId}`);
         this.mqttClient = new MqttClient({topic,host: mqttHost, port: mqttPort, receive: this.mqttReceive.bind(this),mqtt});
         this.vehicleClient = new VehicleClient({host: vehicleHost,port: vehiclePort, receive: this.vehicleReceive.bind(this),net});
 
+        this.vehicleClient.connect(() => {
+            console.log('Connected to car');
+        });
         this.mqttClient.connect((err) => {
             if(err) {
                 throw err;
